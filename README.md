@@ -93,11 +93,16 @@ Open `config.js` in any text editor and adjust the options:
 
 ```javascript
 window.ROMRO_CONFIG = {
-  username: "romro",
-  displayName: "romro",
+  username: "romeo",
+  displayName: "romeo",
   bio: "Just vibing through the internet 🌙 | coder, gamer, dreamer",
-  avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=romro",
+  avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=romeo",
   theme: "blurple",
+  bgPreset: "aurora",
+  audio: {
+    title: "Never Gonna Give You Up",
+    artist: "Rick Astley"
+  }
   // ...
 };
 ```

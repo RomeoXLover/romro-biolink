@@ -1,14 +1,14 @@
 /**
  * ROMRO Bio-Link Platform Configuration
- * Edit this file to customize your profile, or use the visual editor at /editor.html
+ * Updated with romeo profile, 14 themes, 6 CSS BG presets, and Rick Astley Rickroll audio.
  */
 
 window.ROMRO_CONFIG = {
   // Profile Information
-  username: "romro",
-  displayName: "romro",
+  username: "romeo",
+  displayName: "romeo",
   bio: "Just vibing through the internet 🌙 | coder, gamer, dreamer",
-  avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=romro",
+  avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=romeo",
   
   // Badges (tag, color, icon/emoji)
   badges: [
@@ -18,13 +18,19 @@ window.ROMRO_CONFIG = {
   ],
 
   // Theme Settings
-  // Available themes: "blurple", "crimson", "emerald", "amber", "ocean", "rose", "void", "retro"
+  // Available themes (14 total):
+  // "blurple", "crimson", "emerald", "amber", "ocean", "rose", "void", "retro",
+  // "cyber", "sakura", "midnight", "neon", "galaxy", "toxic"
   theme: "blurple",
 
+  // Background Presets (6 CSS-only presets):
+  // "aurora", "sunset", "matrix", "deep_space", "vaporwave", "forest"
+  bgPreset: "aurora",
+
   // Background Settings
-  // types: "gradient", "solid", "image", "video"
   background: {
-    type: "gradient",
+    type: "preset", // "preset", "gradient", "solid", "image", "video"
+    preset: "aurora",
     gradientColors: ["#050519", "#0c0827", "#120a3a", "#050519"],
     gradientAngle: 135,
     animatedGradient: true,
@@ -38,18 +44,18 @@ window.ROMRO_CONFIG = {
   effects: {
     usernameEffect: "gradient", // "none", "glitch", "rainbow", "typewriter", "gradient"
     cardTilt3D: true,
-    cardBlur: 16, // px
+    cardBlur: 20, // px
     cardOpacity: 0.72, // 0 to 1
     particleEffect: "sparkles", // "none", "sparkles", "snow", "rain", "matrix"
-    customCursor: "crosshair", // "default", "dot", "crosshair", or an image url
+    customCursor: "crosshair", // "default", "dot", "crosshair"
     cursorColor: "#7B5CF8"
   },
 
   // Discord Presence Card
   discord: {
     enabled: true,
-    username: "romro#1337",
-    avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=romro-bot",
+    username: "romeo#0001",
+    avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=romeo-bot",
     status: "online", // "online", "idle", "dnd", "offline"
     activityType: "Playing", // "Playing", "Streaming", "Listening to", "Watching"
     activityName: "Visual Studio Code",
@@ -67,23 +73,23 @@ window.ROMRO_CONFIG = {
 
   // Social Links
   socials: [
-    { platform: "discord", label: "Discord", url: "https://discord.com/users/romro", handle: "romro#1337" },
-    { platform: "twitter", label: "Twitter / X", url: "https://x.com/romrokk", handle: "@romrokk" },
-    { platform: "github", label: "GitHub", url: "https://github.com/romro-dev", handle: "romro-dev" },
-    { platform: "youtube", label: "YouTube", url: "https://youtube.com/@romroTV", handle: "romroTV" },
-    { platform: "twitch", label: "Twitch", url: "https://twitch.tv/romro", handle: "romro" },
-    { platform: "instagram", label: "Instagram", url: "https://instagram.com/romro", handle: "@romro" },
-    { platform: "spotify", label: "Spotify", url: "https://open.spotify.com/user/romro", handle: "romro" },
-    { platform: "steam", label: "Steam", url: "https://steamcommunity.com/id/romro", handle: "romro" }
+    { platform: "discord", label: "Discord", url: "https://discord.com/users/romeo", handle: "romeo#0001" },
+    { platform: "twitter", label: "Twitter / X", url: "https://x.com/romeokk", handle: "@romeokk" },
+    { platform: "github", label: "GitHub", url: "https://github.com/romeo-dev", handle: "romeo-dev" },
+    { platform: "youtube", label: "YouTube", url: "https://youtube.com/@romeoTV", handle: "romeoTV" },
+    { platform: "twitch", label: "Twitch", url: "https://twitch.tv/romeo", handle: "romeo" },
+    { platform: "instagram", label: "Instagram", url: "https://instagram.com/romeo", handle: "@romeo" },
+    { platform: "spotify", label: "Spotify", url: "https://open.spotify.com/user/romeo", handle: "romeo" },
+    { platform: "steam", label: "Steam", url: "https://steamcommunity.com/id/romeo", handle: "romeo" }
   ],
 
-  // Audio Player
+  // Audio Player (Rickroll - Never Gonna Give You Up)
   audio: {
     enabled: true,
-    autoplay: false, // Browsers require user interaction before sound plays; click-to-enter enabled
-    title: "Lofi Chill - romro's playlist",
-    artist: "ROMRO Beats",
-    audioUrl: "https://cdn.freesound.org/previews/612/612613_5674468-lq.mp3", // Smooth relaxing ambient lofi track preview
+    autoplay: false, // Browsers require user interaction; click-to-enter unlocks audio
+    title: "Never Gonna Give You Up",
+    artist: "Rick Astley",
+    audioUrl: "https://ia801406.us.archive.org/21/items/rick-astley-never-gonna-give-you-up_202007/Rick%20Astley%20-%20Never%20Gonna%20Give%20You%20Up.mp3",
     volume: 0.65
   },
 

@@ -408,11 +408,11 @@
         <div class="form-row">
           <div class="form-group">
             <label for="f-username">Username</label>
-            <input type="text" id="f-username" placeholder="romro">
+            <input type="text" id="f-username" placeholder="romeo">
           </div>
           <div class="form-group">
             <label for="f-displayname">Display Name</label>
-            <input type="text" id="f-displayname" placeholder="romro">
+            <input type="text" id="f-displayname" placeholder="romeo">
           </div>
         </div>
         <div class="form-group">
@@ -442,6 +442,12 @@
               <option value="rose">Rose (Magenta / Pink)</option>
               <option value="void">Void (Minimalist Dark)</option>
               <option value="retro">Retro (Vaporwave Teal & Pink)</option>
+              <option value="cyber">Cyber (Cyberpunk Yellow & Black)</option>
+              <option value="sakura">Sakura (Cherry Blossom Pink)</option>
+              <option value="midnight">Midnight (Navy & Ice Blue)</option>
+              <option value="neon">Neon (Electric Lime & Hot Pink)</option>
+              <option value="galaxy">Galaxy (Nebula Purple & Gold)</option>
+              <option value="toxic">Toxic (Radioactive Green)</option>
             </select>
           </div>
           <div class="form-group">
@@ -566,7 +572,7 @@
           <div class="form-row">
             <div class="form-group">
               <label for="f-discord-user">Discord Tag</label>
-              <input type="text" id="f-discord-user" placeholder="romro#1337">
+              <input type="text" id="f-discord-user" placeholder="romeo#0001">
             </div>
             <div class="form-group">
               <label for="f-discord-status">Status</label>
@@ -758,7 +764,7 @@
         // Discord
         const discord = config.discord || {};
         document.getElementById('f-discord-enabled').checked = discord.enabled !== false;
-        document.getElementById('f-discord-user').value = discord.username || "romro#1337";
+        document.getElementById('f-discord-user').value = discord.username || "romeo#0001";
         document.getElementById('f-discord-status').value = discord.status || "online";
         document.getElementById('f-discord-type').value = discord.activityType || "Playing";
         document.getElementById('f-discord-activity').value = discord.activityName || "Visual Studio Code";
