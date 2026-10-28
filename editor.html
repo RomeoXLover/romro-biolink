@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ROMRO | Visual Profile Editor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-base: #050519;
+      --bg-surface: #0a0a24;
+      --bg-card: rgba(16, 16, 42, 0.7);
+      --primary: #7B5CF8;
+      --primary-rgb: 123, 92, 248;
+      --secondary: #9E86FB;
+      --accent-glow: rgba(123, 92, 248, 0.35);
+      --border: rgba(123, 92, 248, 0.2);
+      --border-hover: rgba(123, 92, 248, 0.55);
+      --text: #FFFFFF;
+      --text-muted: #9499B7;
+      --font-main: 'Plus Jakarta Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-display: 'Space Grotesk', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg-base);
+      color: var(--text);
+      font-family: var(--font-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Top Navigation */
+    header {
+      background: rgba(10, 10, 36, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.85rem 1.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #FFF;
+      text-decoration: none;
+    }
+    .brand-badge {
+      background: var(--primary);
+      color: #fff;
+      font-size: 0.65rem;
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      letter-spacing: 0.5px;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Action Buttons */
+    .btn {
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      border: 1px solid transparent;
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      color: #DDD;
+      border-color: var(--border);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #FFF;
+      border-color: var(--border-hover);
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #FFF;
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+    .btn-primary:hover {
+      background: var(--secondary);
+      box-shadow: 0 0 25px var(--accent-glow);
+      transform: translateY(-1px);
+    }
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.15);
+      color: #EF4444;
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+    .btn-danger:hover {
+      background: #EF4444;
+      color: #fff;
+    }
+    .btn-sm {
+      padding: 4px 8px;
+      font-size: 0.75rem;
+      border-radius: 6px;
+    }
+
+    /* Layout Split */
+    .editor-layout {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 580px 1fr;
+      min-height: calc(100vh - 65px);
+    }
+    @media (max-width: 1100px) {
+      .editor-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Sidebar Editor Controls */
+    .editor-sidebar {
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border);
+      padding: 1.5rem;
+      overflow-y: auto;
+      max-height: calc(100vh - 65px);
+    }
+
+    /* Form Section Panels */
+    .config-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+      transition: border-color 0.2s ease;
+    }
+    .config-section:hover {
+      border-color: var(--border-hover);
+    }
+    .section-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #FFF;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 0.5rem;
+    }
+    .section-title span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Form Fields */
+    .form-group {
+      margin-bottom: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    input[type="text"],
+    input[type="number"],
+    input[type="url"],
+    textarea,
+    select {
+      background: rgba(5, 5, 25, 0.8);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 12px;
+      color: #FFF;
+      font-family: inherit;
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      width: 100%;
+    }
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    input[type="color"] {
+      -webkit-appearance: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      width: 36px;
+      height: 36px;
+      background: transparent;
+      cursor: pointer;
+    }
+    input[type="range"] {
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    /* Toggle Switch */
+    .toggle-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      padding: 4px 0;
+    }
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 42px;
+      height: 22px;
+    }
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: rgba(255, 255, 255, 0.15);
+      border-radius: 24px;
+      transition: .3s;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      border-radius: 50%;
+      transition: .3s;
+    }
+    input:checked + .slider {
+      background-color: var(--primary);
+    }
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+
+    /* Badges List & Socials List Items */
+    .item-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .list-row-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(5, 5, 25, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 10px;
+    }
+    .list-row-item input {
+      margin: 0;
+    }
+
+    /* Live Preview Section */
+    .preview-container {
+      background: #02020a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      padding: 1.5rem;
+    }
+    .preview-header-bar {
+      position: absolute;
+      top: 15px;
+      background: rgba(14, 14, 38, 0.85);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 6px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.8rem;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      z-index: 10;
+    }
+    .preview-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10B981;
+      box-shadow: 0 0 8px #10B981;
+    }
+    .preview-frame-wrapper {
+      width: 100%;
+      max-width: 540px;
+      height: 90vh;
+      border-radius: 24px;
+      overflow: hidden;
+      border: 2px solid var(--border);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 30px var(--accent-glow);
+      background: #050519;
+      position: relative;
+    }
+    .preview-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* Toast Notification */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--primary);
+      color: #FFF;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      box-shadow: 0 8px 25px var(--accent-glow);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 10000;
+    }
+    #toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header Navigation -->
+  <header>
+    <a href="index.html" class="brand">
+      <span>ROMRO</span>
+      <span class="brand-badge">EDITOR</span>
+    </a>
+    <div class="header-actions">
+      <button class="btn btn-secondary" id="btn-reset" title="Reset to default config.js">Reset Defaults</button>
+      <button class="btn btn-secondary" id="btn-import">Import JSON</button>
+      <button class="btn btn-secondary" id="btn-export">Export JSON</button>
+      <a href="index.html" class="btn btn-primary" target="_blank">View Live Profile ↗</a>
+    </div>
+  </header>
+
+  <!-- Hidden File Input for Import -->
+  <input type="file" id="import-file-input" accept=".json" style="display: none;">
+
+  <!-- Main Split Layout -->
+  <main class="editor-layout">
+    
+    <!-- Sidebar Settings Form -->
+    <aside class="editor-sidebar">
+      
+      <!-- Profile Information -->
+      <section class="config-section">
+        <h2 class="section-title">
+          <span>👤 Profile Basics</span>
+        </h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="f-username">Username</label>
+            <input type="text" id="f-username" placeholder="romro">
+          </div>
+          <div class="form-group">
+            <label for="f-displayname">Display Name</label>
+            <input type="text" id="f-displayname" placeholder="romro">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="f-avatar">Avatar URL</label>
+          <input type="url" id="f-avatar" placeholder="https://...">
+        </div>
+        <div class="form-group">
+          <label for="f-bio">Bio Text</label>
+          <textarea id="f-bio" placeholder="Just vibing through the internet..."></textarea>
+        </div>
+      </section>
+
+      <!-- Theme & Styling -->
+      <section class="config-section">
+        <h2 class="section-title">
+          <span>🎨 Theme & Color</span>
+        </h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="f-theme">Active Theme</label>
+            <select id="f-theme">
+              <option value="blurple">Blurple (Purple / Indigo)</option>
+              <option value="crimson">Crimson (Neon Red)</option>
+              <option value="emerald">Emerald (Neon Green)</option>
+              <option value="amber">Amber (Gold / Orange)</option>
+              <option value="ocean">Ocean (Cyan / Blue)</option>
+              <option value="rose">Rose (Magenta / Pink)</option>
+              <option value="void">Void (Minimalist Dark)</option>
+              <option value="retro">Retro (Vaporwave Teal & Pink)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="f-cursor">Custom Cursor</label>
+            <select id="f-cursor">
+              <option value="crosshair">Crosshair</option>
+              <option value="dot">Glow Dot</option>
+              <option value="default">System Default</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- Background Setup -->
+      <section class="config-section">
+        <h2 class="section-title">
+          <span>🌌 Background Canvas</span>
+        </h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="f-bg-type">Background Type</label>
+            <select id="f-bg-type">
+              <option value="gradient">Animated Gradient</option>
+              <option value="solid">Solid Color</option>
+              <option value="image">Custom Image URL</option>
+              <option value="video">Background Video URL (mp4)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="f-bg-opacity">Dark Overlay Opacity</label>
+            <input type="range" id="f-bg-opacity" min="0" max="1" step="0.05" value="0.65">
+          </div>
+        </div>
+        <div class="form-group" id="group-bg-image" style="display:none;">
+          <label for="f-bg-image">Image URL</label>
+          <input type="url" id="f-bg-image" placeholder="https://images.unsplash.com/...">
+        </div>
+        <div class="form-group" id="group-bg-video" style="display:none;">
+          <label for="f-bg-video">Video MP4 URL</label>
+          <input type="url" id="f-bg-video" placeholder="https://cdn.example.com/video.mp4">
+        </div>
+        <div class="form-group" id="group-bg-solid" style="display:none;">
+          <label for="f-bg-solid">Solid Background Color</label>
+          <input type="color" id="f-bg-solid" value="#050519">
+        </div>
+      </section>
+
+      <!-- Visual Effects & 3D Tilt -->
+      <section class="config-section">
+        <h2 class="section-title">
+          <span>✨ Effects & Animations</span>
+        </h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="f-username-effect">Username Effect</label>
+            <select id="f-username-effect">
+              <option value="gradient">Glow Gradient</option>
+              <option value="glitch">Cyberpunk Glitch</option>
+              <option value="rainbow">Chroma Rainbow</option>
+              <option value="typewriter">Typewriter</option>
+              <option value="none">None (Plain White)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="f-particles">Particle Engine</label>
+            <select id="f-particles">
+              <option value="sparkles">Sparkles</option>
+              <option value="snow">Snow Drift</option>
+              <option value="rain">Neon Rain</option>
+              <option value="matrix">Matrix Code</option>
+              <option value="none">Disabled</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="f-card-blur">Glass Blur (<span id="val-blur">16</span>px)</label>
+            <input type="range" id="f-card-blur" min="0" max="40" value="16">
+          </div>
+          <div class="form-group">
+            <label for="f-card-opacity">Card Opacity (<span id="val-opacity">72</span>%)</label>
+            <input type="range" id="f-card-opacity" min="0.1" max="1" step="0.05" value="0.72">
+          </div>
+        </div>
+        <div class="toggle-wrap">
+          <label for="f-card-tilt">3D Card Tilt on Hover</label>
+          <label class="toggle-switch">
+            <input type="checkbox" id="f-card-tilt" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+      </section>
+
+      <!-- Badges System -->
+      <section class="config-section">
+        <h2 class="section-title">
+          <span>🏷️ Badges / Tags</span>
+          <button class="btn btn-secondary btn-sm" id="btn-add-badge">+ Add Badge</button>
+        </h2>
+        <div class="item-list" id="badges-list"></div>
+      </section>
+
+      <!-- Social Links Grid -->
+      <section class="config-section">
+        <h2 class="section-title">
+          <span>🔗 Social Links</span>
+          <button class="btn btn-secondary btn-sm" id="btn-add-social">+ Add Social</button>
+        </h2>
+        <div class="item-list" id="socials-list"></div>
+      </section>
+
+      <!-- Discord Presence Card -->
+      <section class="config-section">
+        <h2 class="section-title">
+          <span>🎮 Discord Presence</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="f-discord-enabled" checked>
+            <span class="slider"></span>
+          </label>
+        </h2>
+        <div id="discord-fields">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="f-discord-user">Discord Tag</label>
+              <input type="text" id="f-discord-user" placeholder="romro#1337">
+            </div>
+            <div class="form-group">
+              <label for="f-discord-status">Status</label>
+              <select id="f-discord-status">
+                <option value="online">Online</option>
+                <option value="idle">Idle / Away</option>
+                <option value="dnd">Do Not Disturb</option>
+                <option value="offline">Invisible</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="f-discord-type">Activity Type</label>
+              <select id="f-discord-type">
+                <option value="Playing">Playing</option>
+                <option value="Streaming">Streaming</option>
+                <option value="Listening to">Listening to</option>
+                <option value="Watching">Watching</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="f-discord-activity">Game / Activity Name</label>
+              <input type="text" id="f-discord-activity" placeholder="Visual Studio Code">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="f-discord-details">Activity Details / Workspace</label>
+            <input type="text" id="f-discord-details" placeholder="Workspace: biolink-v2">
+          </div>
+        </div>
+      </section>
+
+      <!-- Audio Player Settings -->
+      <section class="config-section">
+        <h2 class="section-title">
+          <span>🎵 Background Audio</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="f-audio-enabled" checked>
+            <span class="slider"></span>
+          </label>
+        </h2>
+        <div id="audio-fields">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="f-song-title">Song Title</label>
+              <input type="text" id="f-song-title" placeholder="Lofi Chill">
+            </div>
+            <div class="form-group">
+              <label for="f-song-artist">Artist</label>
+              <input type="text" id="f-song-artist" placeholder="ROMRO Beats">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="f-audio-url">Audio MP3 / Stream URL</label>
+            <input type="url" id="f-audio-url" placeholder="https://cdn.freesound.org/...">
+          </div>
+          <div class="form-group">
+            <label for="f-audio-vol">Default Volume</label>
+            <input type="range" id="f-audio-vol" min="0" max="1" step="0.05" value="0.65">
+          </div>
+        </div>
+      </section>
+
+      <!-- About Me Box -->
+      <section class="config-section">
+        <h2 class="section-title">
+          <span>📝 About Me Section</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="f-about-enabled" checked>
+            <span class="slider"></span>
+          </label>
+        </h2>
+        <div id="about-fields">
+          <div class="form-group">
+            <label for="f-about-title">Box Title</label>
+            <input type="text" id="f-about-title" placeholder="About Me">
+          </div>
+          <div class="form-group">
+            <label for="f-about-content">Content</label>
+            <textarea id="f-about-content" placeholder="Tell the world about yourself..."></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- View Counter -->
+      <section class="config-section">
+        <h2 class="section-title">
+          <span>👁️ View Counter</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="f-views-enabled" checked>
+            <span class="slider"></span>
+          </label>
+        </h2>
+        <div class="form-row" id="views-fields">
+          <div class="form-group">
+            <label for="f-views-initial">Initial Counter Value</label>
+            <input type="number" id="f-views-initial" value="1337">
+          </div>
+          <div class="form-group">
+            <label for="f-views-label">Counter Label</label>
+            <input type="text" id="f-views-label" value="views">
+          </div>
+        </div>
+      </section>
+
+    </aside>
+
+    <!-- Right Live Preview Pane -->
+    <div class="preview-container">
+      <div class="preview-header-bar">
+        <span class="preview-dot"></span>
+        <span>LIVE PREVIEW • REAL-TIME SYNC</span>
+      </div>
+      <div class="preview-frame-wrapper">
+        <iframe id="preview-frame" class="preview-frame" src="index.html"></iframe>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Toast Notification -->
+  <div id="toast">Changes saved to browser storage!</div>
+
+  <!-- Load default configuration -->
+  <script src="config.js"></script>
+
+  <script>
+    (function() {
+      // Configuration state
+      let config = JSON.parse(JSON.stringify(window.ROMRO_CONFIG || {}));
+      const stored = localStorage.getItem('romro_custom_config');
+      if (stored) {
+        try {
+          config = Object.assign({}, config, JSON.parse(stored));
+        } catch(e){}
+      }
+
+      const previewFrame = document.getElementById('preview-frame');
+
+      function showToast(msg) {
+        const toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2500);
+      }
+
+      function syncToStorage() {
+        localStorage.setItem('romro_custom_config', JSON.stringify(config));
+        // Reload preview frame to reflect updates
+        if (previewFrame.contentWindow) {
+          previewFrame.contentWindow.location.reload();
+        }
+      }
+
+      // Initialize Inputs with current config
+      function populateForm() {
+        // Basics
+        document.getElementById('f-username').value = config.username || "";
+        document.getElementById('f-displayname').value = config.displayName || config.username || "";
+        document.getElementById('f-avatar').value = config.avatar || "";
+        document.getElementById('f-bio').value = config.bio || "";
+
+        // Theme & Effects
+        document.getElementById('f-theme').value = config.theme || "blurple";
+        document.getElementById('f-cursor').value = (config.effects && config.effects.customCursor) || "crosshair";
+        document.getElementById('f-username-effect').value = (config.effects && config.effects.usernameEffect) || "gradient";
+        document.getElementById('f-particles').value = (config.effects && config.effects.particleEffect) || "sparkles";
+        
+        const cardBlur = (config.effects && config.effects.cardBlur !== undefined) ? config.effects.cardBlur : 16;
+        document.getElementById('f-card-blur').value = cardBlur;
+        document.getElementById('val-blur').textContent = cardBlur;
+
+        const cardOpacity = (config.effects && config.effects.cardOpacity !== undefined) ? config.effects.cardOpacity : 0.72;
+        document.getElementById('f-card-opacity').value = cardOpacity;
+        document.getElementById('val-opacity').textContent = Math.round(cardOpacity * 100);
+
+        document.getElementById('f-card-tilt').checked = config.effects ? (config.effects.cardTilt3D !== false) : true;
+
+        // Background
+        const bg = config.background || {};
+        document.getElementById('f-bg-type').value = bg.type || "gradient";
+        document.getElementById('f-bg-opacity').value = bg.overlayOpacity !== undefined ? bg.overlayOpacity : 0.65;
+        document.getElementById('f-bg-image').value = bg.imageUrl || "";
+        document.getElementById('f-bg-video').value = bg.videoUrl || "";
+        document.getElementById('f-bg-solid').value = bg.solidColor || "#050519";
+        updateBgInputs(bg.type || "gradient");
+
+        // Discord
+        const discord = config.discord || {};
+        document.getElementById('f-discord-enabled').checked = discord.enabled !== false;
+        document.getElementById('f-discord-user').value = discord.username || "romro#1337";
+        document.getElementById('f-discord-status').value = discord.status || "online";
+        document.getElementById('f-discord-type').value = discord.activityType || "Playing";
+        document.getElementById('f-discord-activity').value = discord.activityName || "Visual Studio Code";
+        document.getElementById('f-discord-details').value = discord.details || "Workspace: biolink-v2";
+
+        // Audio
+        const audio = config.audio || {};
+        document.getElementById('f-audio-enabled').checked = audio.enabled !== false;
+        document.getElementById('f-song-title').value = audio.title || "Lofi Chill";
+        document.getElementById('f-song-artist').value = audio.artist || "ROMRO Beats";
+        document.getElementById('f-audio-url').value = audio.audioUrl || "";
+        document.getElementById('f-audio-vol').value = audio.volume !== undefined ? audio.volume : 0.65;
+
+        // About
+        const about = config.aboutMe || {};
+        document.getElementById('f-about-enabled').checked = about.enabled !== false;
+        document.getElementById('f-about-title').value = about.title || "About Me";
+        document.getElementById('f-about-content').value = about.content || "";
+
+        // Views
+        const views = config.views || {};
+        document.getElementById('f-views-enabled').checked = views.enabled !== false;
+        document.getElementById('f-views-initial').value = views.initialCount || 1337;
+        document.getElementById('f-views-label').value = views.label || "views";
+
+        renderBadgesList();
+        renderSocialsList();
+      }
+
+      function updateBgInputs(type) {
+        document.getElementById('group-bg-image').style.display = type === 'image' ? 'block' : 'none';
+        document.getElementById('group-bg-video').style.display = type === 'video' ? 'block' : 'none';
+        document.getElementById('group-bg-solid').style.display = type === 'solid' ? 'block' : 'none';
+      }
+
+      // Render Badges
+      function renderBadgesList() {
+        const container = document.getElementById('badges-list');
+        container.innerHTML = '';
+        if (!config.badges) config.badges = [];
+
+        config.badges.forEach((b, idx) => {
+          const row = document.createElement('div');
+          row.className = 'list-row-item';
+          row.innerHTML = `
+            <input type="text" value="${b.text}" style="width: 110px;" placeholder="Tag" data-idx="${idx}" class="badge-text-input">
+            <input type="color" value="${b.color || '#7B5CF8'}" data-idx="${idx}" class="badge-color-input" title="Badge Color">
+            <button class="btn btn-danger btn-sm" data-idx="${idx}">✕</button>
+          `;
+          container.appendChild(row);
+
+          row.querySelector('.badge-text-input').addEventListener('input', (e) => {
+            config.badges[idx].text = e.target.value;
+            syncToStorage();
+          });
+          row.querySelector('.badge-color-input').addEventListener('input', (e) => {
+            config.badges[idx].color = e.target.value;
+            config.badges[idx].glow = `${e.target.value}80`;
+            syncToStorage();
+          });
+          row.querySelector('.btn-danger').addEventListener('click', () => {
+            config.badges.splice(idx, 1);
+            renderBadgesList();
+            syncToStorage();
+          });
+        });
+      }
+
+      document.getElementById('btn-add-badge').addEventListener('click', () => {
+        if (!config.badges) config.badges = [];
+        config.badges.push({ text: "NEW", color: "#7B5CF8", textColor: "#FFF", glow: "rgba(123, 92, 248, 0.5)" });
+        renderBadgesList();
+        syncToStorage();
+      });
+
+      // Render Socials
+      function renderSocialsList() {
+        const container = document.getElementById('socials-list');
+        container.innerHTML = '';
+        if (!config.socials) config.socials = [];
+
+        config.socials.forEach((s, idx) => {
+          const row = document.createElement('div');
+          row.className = 'list-row-item';
+          row.innerHTML = `
+            <select class="social-plat-input" style="width: 100px;">
+              <option value="discord" ${s.platform === 'discord' ? 'selected' : ''}>Discord</option>
+              <option value="twitter" ${s.platform === 'twitter' ? 'selected' : ''}>Twitter/X</option>
+              <option value="github" ${s.platform === 'github' ? 'selected' : ''}>GitHub</option>
+              <option value="youtube" ${s.platform === 'youtube' ? 'selected' : ''}>YouTube</option>
+              <option value="twitch" ${s.platform === 'twitch' ? 'selected' : ''}>Twitch</option>
+              <option value="instagram" ${s.platform === 'instagram' ? 'selected' : ''}>Instagram</option>
+              <option value="spotify" ${s.platform === 'spotify' ? 'selected' : ''}>Spotify</option>
+              <option value="steam" ${s.platform === 'steam' ? 'selected' : ''}>Steam</option>
+              <option value="tiktok" ${s.platform === 'tiktok' ? 'selected' : ''}>TikTok</option>
+              <option value="reddit" ${s.platform === 'reddit' ? 'selected' : ''}>Reddit</option>
+            </select>
+            <input type="text" value="${s.label || ''}" placeholder="Label" style="width: 90px;" class="social-label-input">
+            <input type="url" value="${s.url || ''}" placeholder="https://..." style="flex:1;" class="social-url-input">
+            <button class="btn btn-danger btn-sm">✕</button>
+          `;
+          container.appendChild(row);
+
+          row.querySelector('.social-plat-input').addEventListener('change', (e) => {
+            config.socials[idx].platform = e.target.value;
+            syncToStorage();
+          });
+          row.querySelector('.social-label-input').addEventListener('input', (e) => {
+            config.socials[idx].label = e.target.value;
+            syncToStorage();
+          });
+          row.querySelector('.social-url-input').addEventListener('input', (e) => {
+            config.socials[idx].url = e.target.value;
+            syncToStorage();
+          });
+          row.querySelector('.btn-danger').addEventListener('click', () => {
+            config.socials.splice(idx, 1);
+            renderSocialsList();
+            syncToStorage();
+          });
+        });
+      }
+
+      document.getElementById('btn-add-social').addEventListener('click', () => {
+        if (!config.socials) config.socials = [];
+        config.socials.push({ platform: "discord", label: "Discord", url: "https://discord.com", handle: "" });
+        renderSocialsList();
+        syncToStorage();
+      });
+
+      // Bind Field Listeners
+      function bindField(id, keyPath, isCheckbox = false) {
+        const el = document.getElementById(id);
+        const eventName = isCheckbox || el.tagName === 'SELECT' ? 'change' : 'input';
+        el.addEventListener(eventName, () => {
+          const val = isCheckbox ? el.checked : el.value;
+          let ref = config;
+          const parts = keyPath.split('.');
+          for (let i = 0; i < parts.length - 1; i++) {
+            if (!ref[parts[i]]) ref[parts[i]] = {};
+            ref = ref[parts[i]];
+          }
+          ref[parts[parts.length - 1]] = val;
+          syncToStorage();
+        });
+      }
+
+      bindField('f-username', 'username');
+      bindField('f-displayname', 'displayName');
+      bindField('f-avatar', 'avatar');
+      bindField('f-bio', 'bio');
+      bindField('f-theme', 'theme');
+      bindField('f-cursor', 'effects.customCursor');
+      bindField('f-username-effect', 'effects.usernameEffect');
+      bindField('f-particles', 'effects.particleEffect');
+      bindField('f-card-tilt', 'effects.cardTilt3D', true);
+
+      // Card Blur & Opacity Range sliders
+      document.getElementById('f-card-blur').addEventListener('input', (e) => {
+        const val = parseInt(e.target.value, 10);
+        document.getElementById('val-blur').textContent = val;
+        if (!config.effects) config.effects = {};
+        config.effects.cardBlur = val;
+        syncToStorage();
+      });
+      document.getElementById('f-card-opacity').addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value);
+        document.getElementById('val-opacity').textContent = Math.round(val * 100);
+        if (!config.effects) config.effects = {};
+        config.effects.cardOpacity = val;
+        syncToStorage();
+      });
+
+      // Background Fields
+      document.getElementById('f-bg-type').addEventListener('change', (e) => {
+        if (!config.background) config.background = {};
+        config.background.type = e.target.value;
+        updateBgInputs(e.target.value);
+        syncToStorage();
+      });
+      document.getElementById('f-bg-opacity').addEventListener('input', (e) => {
+        if (!config.background) config.background = {};
+        config.background.overlayOpacity = parseFloat(e.target.value);
+        syncToStorage();
+      });
+      bindField('f-bg-image', 'background.imageUrl');
+      bindField('f-bg-video', 'background.videoUrl');
+      bindField('f-bg-solid', 'background.solidColor');
+
+      // Discord
+      bindField('f-discord-enabled', 'discord.enabled', true);
+      bindField('f-discord-user', 'discord.username');
+      bindField('f-discord-status', 'discord.status');
+      bindField('f-discord-type', 'discord.activityType');
+      bindField('f-discord-activity', 'discord.activityName');
+      bindField('f-discord-details', 'discord.details');
+
+      // Audio
+      bindField('f-audio-enabled', 'audio.enabled', true);
+      bindField('f-song-title', 'audio.title');
+      bindField('f-song-artist', 'audio.artist');
+      bindField('f-audio-url', 'audio.audioUrl');
+      document.getElementById('f-audio-vol').addEventListener('input', (e) => {
+        if (!config.audio) config.audio = {};
+        config.audio.volume = parseFloat(e.target.value);
+        syncToStorage();
+      });
+
+      // About
+      bindField('f-about-enabled', 'aboutMe.enabled', true);
+      bindField('f-about-title', 'aboutMe.title');
+      bindField('f-about-content', 'aboutMe.content');
+
+      // Views
+      bindField('f-views-enabled', 'views.enabled', true);
+      document.getElementById('f-views-initial').addEventListener('input', (e) => {
+        if (!config.views) config.views = {};
+        config.views.initialCount = parseInt(e.target.value, 10);
+        syncToStorage();
+      });
+      bindField('f-views-label', 'views.label');
+
+      // Export JSON
+      document.getElementById('btn-export').addEventListener('click', () => {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(config, null, 2));
+        const dlAnchor = document.createElement('a');
+        dlAnchor.setAttribute("href", dataStr);
+        dlAnchor.setAttribute("download", `romro_config_${config.username || 'user'}.json`);
+        dlAnchor.click();
+        showToast("Configuration exported as JSON!");
+      });
+
+      // Import JSON
+      const fileInput = document.getElementById('import-file-input');
+      document.getElementById('btn-import').addEventListener('click', () => fileInput.click());
+      fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          try {
+            const imported = JSON.parse(event.target.result);
+            config = Object.assign({}, config, imported);
+            populateForm();
+            syncToStorage();
+            showToast("Configuration imported successfully!");
+          } catch(err) {
+            alert("Invalid JSON file provided.");
+          }
+        };
+        reader.readAsText(file);
+      });
+
+      // Reset Defaults
+      document.getElementById('btn-reset').addEventListener('click', () => {
+        if (confirm("Reset all settings to default config.js?")) {
+          localStorage.removeItem('romro_custom_config');
+          localStorage.removeItem('romro_views');
+          config = JSON.parse(JSON.stringify(window.ROMRO_CONFIG || {}));
+          populateForm();
+          if (previewFrame.contentWindow) {
+            previewFrame.contentWindow.location.reload();
+          }
+          showToast("Settings reset to defaults!");
+        }
+      });
+
+      // Init
+      populateForm();
+
+    })();
+  </script>
+</body>
+</html>
